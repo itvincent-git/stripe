@@ -18,7 +18,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CollectionActivity"></activity>
+        <activity android:name=".CollectionActivity" />
+        <activity android:name=".NPEActivity"></activity>
     </application>
 
 </manifest>
