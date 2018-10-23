@@ -64,9 +64,13 @@ class NPEActivity : AppCompatActivity() {
 
     var first: String? = null
     var second: String? = null
+    var third: String? = null
     private fun _notNull() {
         first = "1"
         second = "2"
+        third = "3"
+
+        // 2====
         allNotNull(first, second) { a, b ->
             printText("$a, $b is all not null")
         }
@@ -75,6 +79,16 @@ class NPEActivity : AppCompatActivity() {
             "$a, $b is all not null"
         } ({ "one of them is null"})
         printText(result)
+
+        // 3====
+        allNotNull(first, second, third) { a, b, c ->
+            printText("$a, $b, $c is all not null")
+        }
+
+        val result2 = allNotNullElse(first, second, third) { a, b, c ->
+            "$a, $b, $c is all not null"
+        } ({ "one of them is null"})
+        printText(result2)
     }
 
     fun printText(text: String) {
