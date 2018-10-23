@@ -21,7 +21,7 @@ fun <T, R> T?.notNullElse(block: (T)-> R): (() -> R) -> R = { if (this == null) 
  *     printText("$a, $b is all not null")
  * }
  */
-fun <A, B, R> allNotNull(first: A?, second: B?, block: (A, B) -> R) {
+fun <A, B> allNotNull(first: A?, second: B?, block: (A, B) -> Unit) {
     if (first != null && second != null) block(first, second)
 }
 
