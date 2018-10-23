@@ -2,15 +2,14 @@ package net.kotlin.ex.sample
 
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main.*
-import net.kotlin.ex.lib.tryCatch
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,7 +35,7 @@ class MainActivity : AppCompatActivity() {
             override fun onBindViewHolder(holder: ActivitiesViewHolder, position: Int) {
                 holder.textView.text = activities[position].name
                 holder.linearLayout.setOnClickListener {
-                    startActivity(Intent(this@MainActivity, tryCatch { Class.forName(activities[position].name) }))
+                    startActivity(Intent(this@MainActivity, Class.forName(activities[position].name)))
                 }
             }
         }
