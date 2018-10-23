@@ -3,17 +3,19 @@ package net.kotlin.ex.sample
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
+import net.kotlin.ex.lib.allNotNull
+import net.kotlin.ex.lib.allNotNullElse
 import net.kotlin.ex.lib.notNullElse
 
 class NPEActivity : AppCompatActivity() {
 
     var multableString:String? = null
 
-    fun run() {
-        multableString = "a"
-        val string = multableString ?: ""
-        printText(string)
-    }
+//    fun run() {
+//        multableString = "a"
+//        val string = multableString ?: ""
+//        printText(string)
+//    }
 // ============
 //    lateinit var multableString: String
 //    fun run() {
@@ -23,9 +25,14 @@ class NPEActivity : AppCompatActivity() {
 // ============
     //var mutableInt: Int by Delegates.notNull<Int>()
 
+//    ============
 
+    private fun run() {
+        multableString = "a"
+        printText(multableString ?: "")
+    }
 
-    fun notNullElse() {
+    private fun notNullElse() {
 //        val result = multableString?.let {
 //            "a"
 //        } ?: run {
@@ -54,6 +61,22 @@ class NPEActivity : AppCompatActivity() {
         foo(null)
     }
 
+
+    var first: String? = null
+    var second: String? = null
+    private fun _notNull() {
+        first = "1"
+        second = "2"
+        allNotNull(first, second) { a, b ->
+            printText("$a, $b is all not null")
+        }
+
+        val result = allNotNullElse(first, second) { a, b ->
+            "$a, $b is all not null"
+        } ({ "one of them is null"})
+        printText(result)
+    }
+
     fun printText(text: String) {
         Toast.makeText(this.applicationContext, text, Toast.LENGTH_SHORT).show()
     }
@@ -62,6 +85,7 @@ class NPEActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_npe)
 //        run()
-        notNullElse()
+//        notNullElse()
+        _notNull()
     }
 }
