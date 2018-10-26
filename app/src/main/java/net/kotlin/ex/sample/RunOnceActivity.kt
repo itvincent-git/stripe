@@ -8,9 +8,9 @@ import net.kotlin.ex.lib.RunOnceTask
 
 class RunOnceActivity : AppCompatActivity() {
 
-    val task = RunOnceTask(fun () {
+    val task = RunOnceTask {
         Toast.makeText(this, "toast once", Toast.LENGTH_SHORT).show()
-    })
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

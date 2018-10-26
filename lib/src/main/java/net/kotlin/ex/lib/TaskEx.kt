@@ -3,6 +3,7 @@ package net.kotlin.ex.lib
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
+ * 任务相关，有只运行一次的任务
  * Created by zhongyongsheng on 2018/10/25.
  */
 
