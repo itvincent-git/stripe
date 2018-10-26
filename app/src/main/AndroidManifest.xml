@@ -19,7 +19,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".CollectionActivity" />
-        <activity android:name=".NPEActivity"></activity>
+        <activity android:name=".NPEActivity" />
+        <activity android:name=".RunOnceActivity"></activity>
     </application>
 
 </manifest>
