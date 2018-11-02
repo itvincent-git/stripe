@@ -20,7 +20,8 @@
         </activity>
         <activity android:name=".CollectionActivity" />
         <activity android:name=".NPEActivity" />
-        <activity android:name=".RunOnceActivity"></activity>
+        <activity android:name=".RunOnceActivity" />
+        <activity android:name=".TryTimesActivity"></activity>
     </application>
 
 </manifest>
