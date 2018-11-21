@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.os.Handler
 import android.os.Looper
+import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -16,15 +17,17 @@ import java.util.concurrent.atomic.AtomicBoolean
  * 只运行一次的任务
  * @param runBlock 任务
  */
-class RunOnceTask(private val runBlock: () -> Unit) {
+class RunOnceTask(private val runBlock: () -> Unit): Runnable {
     private val hasRun = AtomicBoolean(false)
 
-    fun runOnce() {
+    override fun run() {
         if (hasRun.compareAndSet(false, true)) {
             runBlock()
         }
     }
 }
+
+fun Runnable.toRunOnceTask() = RunOnceTask { this.run() }
 
 /**
  * 可取消的任务

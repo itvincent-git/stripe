@@ -1,23 +1,27 @@
 package net.kotlin.ex.sample
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_run_once.*
-import net.kotlin.ex.lib.RunOnceTask
+import net.kotlin.ex.lib.toRunOnceTask
 
 class RunOnceActivity : AppCompatActivity() {
 
-    val task = RunOnceTask {
-        Toast.makeText(this, "toast once", Toast.LENGTH_SHORT).show()
-    }
+    private val runnable = Runnable {
+        showToast(this, "toast once")
+    }.toRunOnceTask()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_run_once)
 
         btn_once.setOnClickListener {
-            task.runOnce()
+
+            // instant run
+            //runnable.run()
+
+            // run after delay
+            it.postDelayed(runnable, 1000)
         }
     }
 }
