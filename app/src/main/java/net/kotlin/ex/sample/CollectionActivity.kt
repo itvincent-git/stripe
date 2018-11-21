@@ -2,6 +2,7 @@ package net.kotlin.ex.sample
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import net.kotlin.ex.lib.random
 
 /**
  * 数组示例
@@ -24,5 +25,7 @@ class CollectionActivity : AppCompatActivity() {
         data -= 66
         data.let { LogUtil.debug("删除66 $it") }
 
+
+        LogUtil.debug("随机从数组取一个数： ${data.random()}")
     }
 }
