@@ -27,6 +27,9 @@ class RunOnceTask(private val runBlock: () -> Unit): Runnable {
     }
 }
 
+/**
+ * 把Runnable转成RunOnceTask
+ */
 fun Runnable.toRunOnceTask() = RunOnceTask { this.run() }
 
 /**
