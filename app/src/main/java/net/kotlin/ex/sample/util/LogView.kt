@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
+import android.widget.ScrollView
 import android.widget.TextView
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,12 +15,15 @@ import java.util.*
  */
 class LogView @JvmOverloads constructor(
         context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
-) : TextView(context, attrs, defStyleAttr) {
+) : ScrollView(context, attrs, defStyleAttr) {
 
-    val format = SimpleDateFormat("HH:mm:SS,sss")
+    val format = SimpleDateFormat("HH:mm:ss,SSS")
+    val textView = TextView(context)
 
     //构造函数初始化，包含读取attrs和LayoutInflater
     init {
+        textView.textSize = 10.0f
+        addView(textView)
     }
 
     fun log(msg: String) {
@@ -34,7 +38,7 @@ class LogView @JvmOverloads constructor(
 
     private fun mainLog(msg: String, currentThread: Thread) {
         val line = "[${currentTime()}] $msg [${currentThread.name}]"
-        text = "$text\n$line"
+        textView.text = "${textView.text}\n$line"
         Log.i("LogView", line)
     }
 

@@ -18,12 +18,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CollectionActivity" />
-        <activity android:name=".NPEActivity" />
-        <activity android:name=".RunOnceActivity" />
-        <activity android:name=".TryTimesActivity" />
-        <activity android:name=".LifecycleActivity" />
-        <activity android:name=".BufferTaskActivity"></activity>
+        <activity android:name=".CollectionActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".NPEActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".RunOnceActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".TryTimesActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".LifecycleActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".BufferTaskActivity" android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

@@ -14,8 +14,10 @@ import java.util.*
 
 class BufferTaskActivity : AppCompatActivity() {
 
-    private val bufferTask = BufferTask<Int>(delayTime = 1000) {
+    private val bufferTask = BufferTask<Int>(delayTime = 2000) {
         log_view.log("receive buffer int $it")
+        //val set = it.toSet()
+        //log_view.log("receive after distinct $set")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +26,17 @@ class BufferTaskActivity : AppCompatActivity() {
         log_view.log("start")
         bindCancelableBlockWithLifecycle(this) { bufferTask }
 
+        emit_btn.setOnClickListener {
+            val randomInt = Random(System.currentTimeMillis()).nextInt(5)
+            log_view.log("add new value: $randomInt")
+            bufferTask.emit(randomInt)
+        }
+    }
+
+    fun autoEmit() {
         val job = GlobalScope.launch {
             for (i in 1..10) {
-                val randomInt = Random(System.currentTimeMillis()).nextInt(10)
+                val randomInt = Random(System.currentTimeMillis()).nextInt(5)
                 log_view.log("add new index:$i, value: $randomInt")
                 bufferTask.emit(randomInt)
                 delay(300)
@@ -37,8 +47,5 @@ class BufferTaskActivity : AppCompatActivity() {
                 job.cancel()
             }
         })
-
-
-
     }
 }
