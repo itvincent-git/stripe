@@ -12,13 +12,12 @@ android {
     }
 
 }
-kotlin { experimental { coroutines 'enable' } }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation "android.arch.lifecycle:extensions:1.1.1"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_android_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 }
 
 //apply plugin: 'com.novoda.bintray-release'//添加

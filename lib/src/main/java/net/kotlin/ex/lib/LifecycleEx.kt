@@ -14,6 +14,10 @@ import android.arch.lifecycle.OnLifecycleEvent
  * 可取消的接口
  */
 interface Cancelable {
+
+    /**
+     * 取消时执行
+     */
     fun cancel()
 }
 
@@ -24,7 +28,7 @@ class CancelableLifecycle {
     var mLastEvent: Lifecycle.Event = Lifecycle.Event.ON_ANY
     var mTargetEvent: Lifecycle.Event = Lifecycle.Event.ON_ANY
 
-    fun  observe(lifecycleOwner: LifecycleOwner, cancelable: Cancelable) {
+    fun observe(lifecycleOwner: LifecycleOwner, cancelable: Cancelable) {
         observe(lifecycleOwner, cancelable, null)
     }
 
@@ -61,5 +65,33 @@ class CancelableLifecycle {
                 }
             }
         })
+    }
+}
+
+/**
+ * 给Cancelable绑定生命周期，生命周期结束时，则调用cancel()方法
+ * 例如onCreate的时候绑定，则onDestroy cancel；onStart时绑定，则onStop cancel
+ *
+ * @param lifecycleOwner 生命周期owner
+ * @param cancelWhenEvent 当此生命周期出现时，才cancel
+ * @param block block返回Cancelable用于取消
+ */
+fun bindCancelableBlockWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null, block: () -> Cancelable) {
+    lifecycleOwner?.let {
+        CancelableLifecycle().observe(it, block(), cancelWhenEvent)
+    }
+}
+
+/**
+ * 给Cancelable绑定生命周期，生命周期结束时，则调用cancel()方法
+ * 例如onCreate的时候绑定，则onDestroy cancel；onStart时绑定，则onStop cancel
+ *
+ * @param lifecycleOwner 生命周期owner
+ * @param cancelWhenEvent 当此生命周期出现时，才cancel
+ * @param cancelable Cancelable用于取消
+ */
+fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null, cancelable: Cancelable) {
+    lifecycleOwner?.let {
+        CancelableLifecycle().observe(it, cancelable, cancelWhenEvent)
     }
 }

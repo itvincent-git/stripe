@@ -4,9 +4,14 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.os.Handler
 import android.os.Looper
-import java.io.InputStream
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.system.measureTimeMillis
 
 /**
  * 任务相关，有只运行一次的任务
@@ -71,9 +76,55 @@ fun runInMainThread(lifecycleOwner: LifecycleOwner? = null,
                     timeUnit: TimeUnit = TimeUnit.MILLISECONDS,
                     cancelWhenEvent: Lifecycle.Event? = null,
                     block: () -> Unit) {
-    val cancelableTask = CancelableTask(mainHandler)
-    cancelableTask.run(delay, timeUnit, Runnable { block() })
-    lifecycleOwner?.let {
-        CancelableLifecycle().observe(it, cancelableTask, cancelWhenEvent)
+    bindCancelableBlockWithLifecycle(lifecycleOwner, cancelWhenEvent) {
+        CancelableTask(mainHandler).apply { this.run(delay, timeUnit, Runnable { block() }) }
+    }
+}
+
+/**
+ * 可缓存被执行的任务
+ * @param delayTime 缓存时长
+ * @param delayTimeUnit 缓存时长单位
+ * @param block 执行的任务，接收已发送的数据
+ */
+class BufferTask<T> @JvmOverloads constructor(val delayTime: Long = 0L,
+                    val delayTimeUnit: TimeUnit = TimeUnit.MILLISECONDS,
+                    val block: (List<T>) -> Unit): Cancelable {
+    protected val channel = Channel<T>()
+    protected val buffer = mutableListOf<T>()
+    protected var receiveJob: Job? = null
+
+    /**
+     * 发送数据给任务
+     */
+    fun emit(value: T) {
+        GlobalScope.launch {
+            channel.send(value)
+        }
+
+        if (receiveJob == null) {
+            startReceive()
+        }
+    }
+
+    fun startReceive() {
+        receiveJob = GlobalScope.launch {
+            while (true) {
+                val deltaTime = measureTimeMillis {
+                    val r = channel.receive()
+                    buffer.add(r)
+                }
+                if (channel.isEmpty) {
+                    val tmp = buffer.toMutableList()
+                    buffer.clear()
+                    delay(delayTimeUnit.toMillis(delayTime) - deltaTime)
+                    block(tmp)
+                }
+            }
+        }
+    }
+
+    override fun cancel() {
+        receiveJob?.cancel()
     }
 }

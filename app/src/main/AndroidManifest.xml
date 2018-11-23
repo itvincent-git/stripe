@@ -22,7 +22,8 @@
         <activity android:name=".NPEActivity" />
         <activity android:name=".RunOnceActivity" />
         <activity android:name=".TryTimesActivity" />
-        <activity android:name=".LifecycleActivity"></activity>
+        <activity android:name=".LifecycleActivity" />
+        <activity android:name=".BufferTaskActivity"></activity>
     </application>
 
 </manifest>
