@@ -4,14 +4,10 @@ import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.os.Handler
 import android.os.Looper
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
-import kotlin.system.measureTimeMillis
 
 /**
  * 任务相关，有只运行一次的任务
@@ -93,6 +89,7 @@ class BufferTask<T> @JvmOverloads constructor(val delayTime: Long = 0L,
     protected val channel = Channel<T>()
     protected val buffer = mutableListOf<T>()
     protected var receiveJob: Job? = null
+    protected val delayRealTime = delayTimeUnit.toMillis(delayTime)
 
     /**
      * 发送数据给任务
@@ -110,15 +107,18 @@ class BufferTask<T> @JvmOverloads constructor(val delayTime: Long = 0L,
     fun startReceive() {
         receiveJob = GlobalScope.launch {
             while (true) {
-                val deltaTime = measureTimeMillis {
-                    val r = channel.receive()
-                    buffer.add(r)
+                val startTime = System.currentTimeMillis()
+                var deltaTime = 0L
+                while (deltaTime < delayRealTime) {
+                    withTimeoutOrNull(delayRealTime - deltaTime) {
+                        val r = channel.receive()
+                        buffer.add(r)
+                    }
+                    deltaTime = (System.currentTimeMillis() - startTime)
                 }
-                if (channel.isEmpty) {
-                    val tmp = buffer.toMutableList()
+                if (buffer.isNotEmpty()) {
+                    buffer.toMutableList().let(block)
                     buffer.clear()
-                    delay(delayTimeUnit.toMillis(delayTime) - deltaTime)
-                    block(tmp)
                 }
             }
         }
