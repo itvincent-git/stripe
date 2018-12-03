@@ -4,6 +4,7 @@ import android.arch.lifecycle.Lifecycle
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import net.kotlin.ex.lib.runInMainThread
+import net.kotlin.ex.sample.util.showToast
 
 class LifecycleActivity : AppCompatActivity() {
 

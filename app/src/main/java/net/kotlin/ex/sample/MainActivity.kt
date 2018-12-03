@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onBindViewHolder(holder: ActivitiesViewHolder, position: Int) {
-                holder.textView.text = activities[position].name
+                holder.textView.text = activities[position].name.substringAfterLast(".")
                 holder.linearLayout.setOnClickListener {
                     startActivity(Intent(this@MainActivity, Class.forName(activities[position].name)))
                 }

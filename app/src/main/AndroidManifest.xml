@@ -18,12 +18,25 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CollectionActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".NPEActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".RunOnceActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".TryTimesActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".LifecycleActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".BufferTaskActivity" android:screenOrientation="portrait"/>
+        <activity
+            android:name=".CollectionActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".NPEActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".RunOnceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".TryTimesActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LifecycleActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".BufferTaskActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".coroutines.CoroutineScopeActivity"></activity>
     </application>
 
 </manifest>

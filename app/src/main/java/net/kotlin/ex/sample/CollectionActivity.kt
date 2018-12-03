@@ -3,6 +3,7 @@ package net.kotlin.ex.sample
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import net.kotlin.ex.lib.random
+import net.kotlin.ex.sample.util.LogUtil
 
 /**
  * 数组示例

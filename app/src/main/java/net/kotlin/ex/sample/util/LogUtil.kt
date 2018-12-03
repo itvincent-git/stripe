@@ -1,4 +1,4 @@
-package net.kotlin.ex.sample
+package net.kotlin.ex.sample.util
 
 import android.content.Context
 import android.util.Log

@@ -1,9 +1,9 @@
 package net.kotlin.ex.lib
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.LifecycleOwner
-import android.arch.lifecycle.OnLifecycleEvent
+import android.arch.lifecycle.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 
 /**
  * 生命周期相关的扩展
@@ -95,3 +95,59 @@ fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent
         CancelableLifecycle().observe(it, cancelable, cancelWhenEvent)
     }
 }
+
+/**
+ * Lifecycle.coroutineScope，在Lifecycle onDestroy时，会把关联的任务全部停止
+ */
+inline val LifecycleOwner.coroutineScope get() = lifecycle.coroutineScope
+
+/**
+ * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
+ */
+fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
+    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Main)
+}
+
+fun Lifecycle.createJob(cancelEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY): Job {
+    if(cancelEvent in forbiddenCancelEvents) {
+        throw UnsupportedOperationException("$cancelEvent is forbidden for createJob(…).")
+    }
+    return Job().also { job ->
+        if (currentState == Lifecycle.State.DESTROYED) job.cancel()
+        else addObserver(object : GenericLifecycleObserver {
+            override fun onStateChanged(source: LifecycleOwner?, event: Lifecycle.Event) {
+                if (event == cancelEvent) {
+                    removeObserver(this)
+                    job.cancel()
+                }
+            }
+        })
+    }
+}
+
+private val forbiddenCancelEvents = arrayOf(
+        Lifecycle.Event.ON_ANY,
+        Lifecycle.Event.ON_CREATE,
+        Lifecycle.Event.ON_START,
+        Lifecycle.Event.ON_RESUME
+)
+private val lifecycleJobs = mutableMapOf<Lifecycle, Job>()
+
+val Lifecycle.job: Job
+    get() = lifecycleJobs[this] ?: createJob().also {
+        if (it.isActive) {
+            lifecycleJobs[this] = it
+            it.invokeOnCompletion { _ -> lifecycleJobs -= this }
+        }
+    }
+private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
+
+val Lifecycle.coroutineScope: CoroutineScope
+    get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
+        val newScope = CoroutineScope(job + Dispatchers.Main)
+        if (job.isActive) {
+            lifecycleCoroutineScopes[this] = newScope
+            job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
+        }
+        newScope
+    }
