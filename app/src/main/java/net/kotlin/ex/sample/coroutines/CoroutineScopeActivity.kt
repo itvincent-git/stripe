@@ -2,6 +2,7 @@ package net.kotlin.ex.sample.coroutines
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class CoroutineScopeActivity : AppCompatActivity() {
         // launch ten coroutines for a demo, each working for a different time
         repeat(10) { i ->
             //this job will cancel when activity onDestory
-            coroutineScope.launch {
+            coroutineScope.launch(Dispatchers.Default) {
                 delay((i + 1) * 500L) // variable delay 200ms, 400ms, ... etc
                 LogUtil.debug("Coroutine $i is done")
             }
