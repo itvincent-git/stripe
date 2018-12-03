@@ -96,6 +96,7 @@ fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent
     }
 }
 
+// ----------- Lifecycle Start --------------
 /**
  * 绑定在LifecycleOwner的coroutineScope，在Lifecycle onDestroy时，会把关联的任务全部停止
  */
@@ -105,7 +106,7 @@ inline val LifecycleOwner.coroutineScope get() = lifecycle.coroutineScope
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
  */
 fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
-    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Main)
+    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default)
 }
 
 /**
@@ -154,10 +155,11 @@ private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
 val Lifecycle.coroutineScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Main)
+        val newScope = CoroutineScope(job + Dispatchers.Default)
         if (job.isActive) {
             lifecycleCoroutineScopes[this] = newScope
             job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
         }
         newScope
     }
+// ----------- Lifecycle End--------------

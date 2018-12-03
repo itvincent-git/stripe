@@ -28,7 +28,7 @@ class CoroutineScopeActivity : AppCompatActivity() {
         // launch ten coroutines for a demo, each working for a different time
         repeat(10) { i ->
             //this job will cancel when activity onDestory
-            coroutineScope.launch(Dispatchers.Default) {
+            coroutineScope.launch {
                 delay((i + 1) * 500L) // variable delay 200ms, 400ms, ... etc
                 LogUtil.debug("Coroutine $i is done")
             }
