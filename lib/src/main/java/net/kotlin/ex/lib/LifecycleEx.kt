@@ -11,6 +11,18 @@ import kotlinx.coroutines.Job
  */
 
 /**
+ * 绑定Cancelable
+ */
+fun LifecycleOwner.bindCancelable(cancelWhenEvent:Lifecycle.Event? = null, block: () -> Cancelable)
+        = bindCancelableBlockWithLifecycle(this, cancelWhenEvent, block)
+
+/**
+ * 绑定到LifecycleOwner
+ */
+fun <T : Cancelable> T.bindWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null)
+        = this.apply { bindCancelableBlockWithLifecycle(lifecycleOwner, cancelWhenEvent) { this } }
+
+/**
  * 可取消的接口
  */
 interface Cancelable {
@@ -96,11 +108,11 @@ fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent
     }
 }
 
-// ----------- Lifecycle Start --------------
+// ----------- lifecycleScope Start --------------
 /**
  * 绑定在LifecycleOwner的coroutineScope，在Lifecycle onDestroy时，会把关联的任务全部停止
  */
-inline val LifecycleOwner.coroutineScope get() = lifecycle.coroutineScope
+inline val LifecycleOwner.lifecycleScope get() = lifecycle.lifecycleScope
 
 /**
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
@@ -153,7 +165,7 @@ val Lifecycle.job: Job
 private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
-val Lifecycle.coroutineScope: CoroutineScope
+val Lifecycle.lifecycleScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
         val newScope = CoroutineScope(job + Dispatchers.Default)
         if (job.isActive) {
@@ -162,4 +174,4 @@ val Lifecycle.coroutineScope: CoroutineScope
         }
         newScope
     }
-// ----------- Lifecycle End--------------
+// ----------- lifecycleScope End--------------
