@@ -36,7 +36,8 @@
         <activity
             android:name=".BufferTaskActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".coroutines.CoroutineScopeActivity"></activity>
+        <activity android:name=".coroutines.CoroutineScopeActivity" />
+        <activity android:name=".coroutines.ChildrenCoroutineActivity"></activity>
     </application>
 
 </manifest>
