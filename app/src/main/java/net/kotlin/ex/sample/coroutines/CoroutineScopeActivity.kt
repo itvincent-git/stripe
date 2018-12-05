@@ -6,8 +6,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.kotlin.ex.lib.lifecycleScope
-import net.kotlin.ex.sample.util.LogUtil
 import net.kotlin.ex.sample.R
+import net.kotlin.ex.sample.util.debugLog
 
 /**
  * use the lifecycleScope bind to the Activity lifecycle
@@ -29,7 +29,7 @@ class CoroutineScopeActivity : AppCompatActivity() {
             //this job will cancel when activity onDestory
             lifecycleScope.launch {
                 delay((i + 1) * 500L) // variable delay 200ms, 400ms, ... etc
-                LogUtil.debug("Coroutine $i is done")
+                debugLog("Coroutine $i is done")
             }
         }
     }

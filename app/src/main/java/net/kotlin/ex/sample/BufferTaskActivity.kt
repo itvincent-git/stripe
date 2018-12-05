@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_buffer_task.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.kotlin.ex.lib.*
-import net.kotlin.ex.sample.util.LogUtil
+import net.kotlin.ex.lib.BufferTask
+import net.kotlin.ex.lib.bindWithLifecycle
+import net.kotlin.ex.lib.lifecycleScope
+import net.kotlin.ex.sample.util.debugLog
 import java.util.*
 
 
@@ -16,7 +18,7 @@ import java.util.*
 class BufferTaskActivity : AppCompatActivity() {
 
     private val bufferTask = BufferTask<Int>(delayTime = 2000) {
-        LogUtil.debug("receive buffer int $it")
+        debugLog("receive buffer int $it")
         log_view.log("receive buffer int $it")
     }.bindWithLifecycle(this)
 
