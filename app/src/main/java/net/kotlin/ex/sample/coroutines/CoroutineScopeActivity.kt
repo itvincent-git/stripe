@@ -16,17 +16,17 @@ class CoroutineScopeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coroutine_scope)
 
-        lifecycleScope.async {
+        lifecycleScope.async(Dispatchers.Main) {
             doSomething()
         }
     }
 
     suspend fun doSomething() = coroutineScope {
-        debugLog("this will run in DefaultDispatcher")
+        debugLog("this will run in Main")
         // launch ten coroutines for a demo, each working for a different time
         repeat(10) { i ->
             //this job will cancel when activity onDestory
-            launch {
+            launch(Dispatchers.Default) {
                 delay((i + 1) * 500L) // variable delay 200ms, 400ms, ... etc
                 debugLog("Coroutine $i is done")
             }
