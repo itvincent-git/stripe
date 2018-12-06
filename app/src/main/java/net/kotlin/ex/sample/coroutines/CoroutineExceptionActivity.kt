@@ -3,18 +3,24 @@ package net.kotlin.ex.sample.coroutines
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
+import net.kotlin.ex.lib.lifecycleScope
 import net.kotlin.ex.sample.R
 import net.kotlin.ex.sample.util.errorLog
 import java.lang.RuntimeException
 
+/**
+ * 父子协程处理异常
+ */
 class CoroutineExceptionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_coroutine_exception)
         loadData()
+        loadDataLifecycle()
     }
 
+    //val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
     val job: Job = SupervisorJob()//子协程的异常或取消，不会影响父协程的运行
     val scope = CoroutineScope(Dispatchers.Default + job)
     // may throw Exception
@@ -28,5 +34,16 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         }
     }
 
+    //问个题coroutineScope{}做子协程，抛出的异常，父协程也能捕获到
+    private suspend fun doWorkLifecycle(): Deferred<Unit> = coroutineScope {
+        async { throw RuntimeException(); Unit }   // (1)
+    }
 
+    private fun loadDataLifecycle() = lifecycleScope.launch {
+        try {
+            doWorkLifecycle().await()                               // (2)
+        } catch (e: Exception) {
+            errorLog(e)
+        }
+    }
 }
