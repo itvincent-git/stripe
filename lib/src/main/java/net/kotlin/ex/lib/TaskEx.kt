@@ -72,9 +72,7 @@ fun runInMainThread(lifecycleOwner: LifecycleOwner? = null,
                     timeUnit: TimeUnit = TimeUnit.MILLISECONDS,
                     cancelWhenEvent: Lifecycle.Event? = null,
                     block: () -> Unit) {
-    bindCancelableBlockWithLifecycle(lifecycleOwner, cancelWhenEvent) {
-        CancelableTask(mainHandler).apply { this.run(delay, timeUnit, Runnable { block() }) }
-    }
+    CancelableTask(mainHandler).bindWithLifecycle(lifecycleOwner, cancelWhenEvent).apply { this.run(delay, timeUnit, Runnable { block() }) }
 }
 
 /**
