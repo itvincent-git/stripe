@@ -56,7 +56,7 @@ class CancelableTask(private val handler: Handler) : Cancelable {
 /**
  * 主线程handler
  */
-private val mainHandler : Handler = Handler(Looper.getMainLooper())
+val mainHandler : Handler = Handler(Looper.getMainLooper())
 
 /**
  * 在main线程执行

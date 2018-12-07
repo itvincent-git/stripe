@@ -3,6 +3,8 @@ package net.kotlin.ex.sample
 import android.arch.lifecycle.Lifecycle
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import kotlinx.coroutines.launch
+import net.kotlin.ex.lib.lifecycleScope
 import net.kotlin.ex.lib.runInMainThread
 import net.kotlin.ex.sample.util.showToast
 
@@ -17,9 +19,11 @@ class LifecycleActivity : AppCompatActivity() {
             showToast(this, "runInMainThread")
         }
 
-        //延迟4秒执行；activity onPause时取消
-        runInMainThread(lifecycleOwner = this, delay = 4000, cancelWhenEvent = Lifecycle.Event.ON_PAUSE) {
-            showToast(this, "runInMainThread cancel when pause")
+        lifecycleScope.launch {
+            //延迟4秒执行；activity onPause时取消
+            runInMainThread(lifecycleOwner = this@LifecycleActivity, delay = 4000, cancelWhenEvent = Lifecycle.Event.ON_PAUSE) {
+                showToast(this@LifecycleActivity, "runInMainThread cancel when pause")
+            }
         }
     }
 }

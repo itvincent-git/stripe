@@ -1,6 +1,7 @@
 package net.kotlin.ex.lib
 
 import android.arch.lifecycle.*
+import android.os.Looper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -50,36 +51,44 @@ class CancelableLifecycle {
             mTargetEvent = cancelWhenEvent
         }
         tryCatch { //捕获LifecycleRegistry#upEvent IllegalArgumentException
-            lifecycleOwner.lifecycle.addObserver(object: LifecycleObserver {
+            if (Looper.getMainLooper() != Looper.myLooper()) {
+                mainHandler.post { addObserver(lifecycleOwner, cancelWhenEvent, cancelable) }
+            } else {
+                addObserver(lifecycleOwner, cancelWhenEvent, cancelable)
+            }
+        }
+    }
 
-                @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
-                fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
-                    if (cancelWhenEvent == null && mLastEvent == Lifecycle.Event.ON_ANY) {
-                        mLastEvent = event
-                        //如果没有定义取消事件，则根据当前执行到的开始事件对应的结束来定义
-                        when (mLastEvent) {
-                            Lifecycle.Event.ON_CREATE -> mTargetEvent = Lifecycle.Event.ON_DESTROY
-                            Lifecycle.Event.ON_START -> mTargetEvent = Lifecycle.Event.ON_STOP
-                            Lifecycle.Event.ON_RESUME -> mTargetEvent = Lifecycle.Event.ON_PAUSE
-                        }
-                    }
+    private fun addObserver(lifecycleOwner: LifecycleOwner, cancelWhenEvent: Lifecycle.Event?, cancelable: Cancelable) {
+        lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
 
-                    if (event == mTargetEvent) {
-                        //取消任务
-                        cancelable.cancel()
-                    }
-
-                    if (owner.lifecycle.currentState == Lifecycle.Event.ON_DESTROY) {
-                        //destroy时要取消监听
-                        owner.lifecycle.removeObserver(this)
-                        if (mTargetEvent == Lifecycle.Event.ON_ANY) {
-                            //如果mTargetEvent还是默认值，代表没有被取消过，此时要最后取消一次
-                            cancelable.cancel()
-                        }
+            @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
+            fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
+                if (cancelWhenEvent == null && mLastEvent == Lifecycle.Event.ON_ANY) {
+                    mLastEvent = event
+                    //如果没有定义取消事件，则根据当前执行到的开始事件对应的结束来定义
+                    when (mLastEvent) {
+                        Lifecycle.Event.ON_CREATE -> mTargetEvent = Lifecycle.Event.ON_DESTROY
+                        Lifecycle.Event.ON_START -> mTargetEvent = Lifecycle.Event.ON_STOP
+                        Lifecycle.Event.ON_RESUME -> mTargetEvent = Lifecycle.Event.ON_PAUSE
                     }
                 }
-            })
-        }
+
+                if (event == mTargetEvent) {
+                    //取消任务
+                    cancelable.cancel()
+                }
+
+                if (owner.lifecycle.currentState == Lifecycle.Event.ON_DESTROY) {
+                    //destroy时要取消监听
+                    owner.lifecycle.removeObserver(this)
+                    if (mTargetEvent == Lifecycle.Event.ON_ANY) {
+                        //如果mTargetEvent还是默认值，代表没有被取消过，此时要最后取消一次
+                        cancelable.cancel()
+                    }
+                }
+            }
+        })
     }
 }
 
