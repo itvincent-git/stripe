@@ -25,6 +25,19 @@ fun <T : Cancelable> T.bindWithLifecycle(lifecycleOwner: LifecycleOwner?, cancel
         = this.apply { bindCancelableBlockWithLifecycle(lifecycleOwner, cancelWhenEvent) { this } }
 
 /**
+ * 添加LifecycleObserver到Lifecycle，当LifecycleOwner生命周期变化时，会通知observer，保证在Main线程执行
+ */
+fun Lifecycle.addObserverInMain(observer: LifecycleObserver) {
+    tryCatch { //捕获LifecycleRegistry#upEvent IllegalArgumentException
+        if (Looper.getMainLooper() != Looper.myLooper()) {
+            mainHandler.post { addObserver(observer) }
+        } else {
+            addObserver(observer)
+        }
+    }
+}
+
+/**
  * 可取消的接口
  */
 interface Cancelable {
@@ -50,17 +63,7 @@ class CancelableLifecycle {
         if (cancelWhenEvent != null) {
             mTargetEvent = cancelWhenEvent
         }
-        tryCatch { //捕获LifecycleRegistry#upEvent IllegalArgumentException
-            if (Looper.getMainLooper() != Looper.myLooper()) {
-                mainHandler.post { addObserver(lifecycleOwner, cancelWhenEvent, cancelable) }
-            } else {
-                addObserver(lifecycleOwner, cancelWhenEvent, cancelable)
-            }
-        }
-    }
-
-    private fun addObserver(lifecycleOwner: LifecycleOwner, cancelWhenEvent: Lifecycle.Event?, cancelable: Cancelable) {
-        lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
+        lifecycleOwner.lifecycle.addObserverInMain(object : LifecycleObserver {
 
             @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
             fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
