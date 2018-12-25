@@ -12,10 +12,10 @@ buildscript {
         coroutines_android_version = '0.26.1'
 
         // === release ==
-        release_version = '1.0.0'
+        release_version = '0.0.1'
         user_org = 'itvincent126'
-        group_id = 'net.jbridge'
-        url = 'https://github.com/itvincent-git/kotlin-coroutines-ex'
+        group_id = 'net.stripe'
+        url = 'https://github.com/itvincent-git/stripe'
     }
     repositories {
         google()

@@ -1,11 +1,10 @@
-package net.kotlin.ex.lib
+package net.stripe.lib
 
 import android.arch.lifecycle.*
 import android.os.Looper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import net.kotlin.coroutines.lib.tryCatch
 
 /**
  * 生命周期相关的扩展
@@ -28,7 +27,8 @@ fun <T : Cancelable> T.bindWithLifecycle(lifecycleOwner: LifecycleOwner?, cancel
  * 添加LifecycleObserver到Lifecycle，当LifecycleOwner生命周期变化时，会通知observer，保证在Main线程执行
  */
 fun Lifecycle.addObserverInMain(observer: LifecycleObserver) {
-    tryCatch { //捕获LifecycleRegistry#upEvent IllegalArgumentException
+    tryCatch {
+        //捕获LifecycleRegistry#upEvent IllegalArgumentException
         if (Looper.getMainLooper() != Looper.myLooper()) {
             mainHandler.post { addObserver(observer) }
         } else {

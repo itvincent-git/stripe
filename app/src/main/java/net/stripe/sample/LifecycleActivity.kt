@@ -1,12 +1,12 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.arch.lifecycle.Lifecycle
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.launch
-import net.kotlin.ex.lib.lifecycleScope
-import net.kotlin.ex.lib.runInMainThread
-import net.kotlin.ex.sample.util.showToast
+import net.stripe.lib.lifecycleScope
+import net.stripe.lib.runInMainThread
+import net.stripe.sample.util.showToast
 
 class LifecycleActivity : AppCompatActivity() {
 

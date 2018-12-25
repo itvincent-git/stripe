@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.kotlin.ex.sample.LifecycleActivity">
+    tools:context="net.kotlin.ex.sample.net.stripe.sample.LifecycleActivity">
 
 </android.support.constraint.ConstraintLayout>

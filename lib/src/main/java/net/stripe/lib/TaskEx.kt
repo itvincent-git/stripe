@@ -1,4 +1,4 @@
-package net.kotlin.ex.lib
+package net.stripe.lib
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner

@@ -1,11 +1,11 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
-import net.kotlin.ex.lib.allNotNull
-import net.kotlin.ex.lib.allNotNullElse
-import net.kotlin.ex.lib.notNullElse
+import net.stripe.lib.allNotNull
+import net.stripe.lib.allNotNullElse
+import net.stripe.lib.notNullElse
 
 class NPEActivity : AppCompatActivity() {
 
@@ -77,7 +77,7 @@ class NPEActivity : AppCompatActivity() {
 
         val result = allNotNullElse(first, second) { a, b ->
             "$a, $b is all not null"
-        } ({ "one of them is null"})
+        }({ "one of them is null"})
         printText(result)
 
         // 3====
@@ -87,7 +87,7 @@ class NPEActivity : AppCompatActivity() {
 
         val result2 = allNotNullElse(first, second, third) { a, b, c ->
             "$a, $b, $c is all not null"
-        } ({ "one of them is null"})
+        }({ "one of them is null"})
         printText(result2)
     }
 

@@ -1,14 +1,14 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_buffer_task.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.kotlin.ex.lib.BufferTask
-import net.kotlin.ex.lib.bindWithLifecycle
-import net.kotlin.ex.lib.lifecycleScope
-import net.kotlin.ex.sample.util.debugLog
+import net.stripe.lib.BufferTask
+import net.stripe.lib.bindWithLifecycle
+import net.stripe.lib.lifecycleScope
+import net.stripe.sample.util.debugLog
 import java.util.*
 
 

@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.kotlin.ex.sample.BufferTaskActivity">
+    tools:context="net.kotlin.ex.sample.net.stripe.sample.BufferTaskActivity">
 
-    <net.kotlin.ex.sample.util.LogView
+    <net.stripe.sample.util.LogView
         android:id="@+id/log_view"
         android:layout_width="match_parent"
         android:layout_height="428dp"

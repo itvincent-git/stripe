@@ -1,4 +1,4 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.content.Intent
 import android.content.pm.PackageManager

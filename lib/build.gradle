@@ -21,12 +21,12 @@ dependencies {
 }
 
 //apply plugin: 'com.novoda.bintray-release'//添加
-
+//
 //publish {
 //    userOrg = "$user_org"//bintray.com用户名
 //    groupId = "$group_id"//jcenter上的路径
-//    artifactId = 'kotlin-ex'//项目名称
+//    artifactId = 'stripe'//项目名称
 //    publishVersion = "$release_version"//版本号
-//    desc = 'runtime dependency'//描述，不重要
+//    desc = 'stripe lib'//描述，不重要
 //    website = "$url"//网站
 //}

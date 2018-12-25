@@ -1,10 +1,10 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_run_once.*
-import net.kotlin.ex.lib.toRunOnceTask
-import net.kotlin.ex.sample.util.showToast
+import net.stripe.lib.toRunOnceTask
+import net.stripe.sample.util.showToast
 
 class RunOnceActivity : AppCompatActivity() {
 

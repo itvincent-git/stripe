@@ -1,13 +1,30 @@
-package net.kotlin.ex.lib
+package net.stripe.lib
 
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.LifecycleOwner
 import android.arch.lifecycle.OnLifecycleEvent
+import android.util.Log
 import kotlinx.coroutines.*
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+
+/**
+ * 协程相关扩展
+ */
+
+/**
+ * 协程异常时打印日志
+ */
+val LoggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
+    Log.e("CoroutineException", "Coroutine exception occurred", throwable)
+}
+
+/**
+ * 全局App生命周期的Scope，替代GlobalScope
+ */
+val AppScope = GlobalScope + LoggingExceptionHandler
 
 /**
  * 协程支持生命周期
@@ -45,11 +62,11 @@ class CoroutineLifecycle {
 /**
  * 执行异步任务并绑定生命周期
  */
-fun <T> GlobalScope.asyncWithLifecycle(lifecycleOwner: LifecycleOwner,
-                                       context: CoroutineContext = EmptyCoroutineContext,
-                                       start: CoroutineStart = CoroutineStart.DEFAULT,
-                                       block: suspend CoroutineScope.() -> T): Deferred<T> {
-    val job = GlobalScope.async(context, start, block)
+fun <T, S: CoroutineScope> S.asyncWithLifecycle(lifecycleOwner: LifecycleOwner,
+                                                context: CoroutineContext = EmptyCoroutineContext,
+                                                start: CoroutineStart = CoroutineStart.DEFAULT,
+                                                block: suspend CoroutineScope.() -> T): Deferred<T> {
+    val job = AppScope.async(context = context, start = start, block = block)
     CoroutineLifecycle().observe(lifecycleOwner, job)
     return job
 }
@@ -57,8 +74,8 @@ fun <T> GlobalScope.asyncWithLifecycle(lifecycleOwner: LifecycleOwner,
 /**
  * 为协程block绑定lifecycle生命周期
  */
-inline fun <T> GlobalScope.bindLifecycle(lifecycleOwner: LifecycleOwner,
-                                       block: CoroutineScope.() -> Deferred<T>): Deferred<T> {
+inline fun <T, S: CoroutineScope> S.bindLifecycle(lifecycleOwner: LifecycleOwner,
+                                                  block: CoroutineScope.() -> Deferred<T>): Deferred<T> {
     val job = block.invoke(this)
     CoroutineLifecycle().observe(lifecycleOwner, job)
     return job
@@ -91,6 +108,6 @@ suspend fun <T> Deferred<T>.awaitOrNull(timeout: Long = 0L,
 /**
  * 执行全部的launch
  */
-fun GlobalScope.launchAll(vararg args: suspend () -> Unit): List<Job> {
+fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job> {
     return args.map { launch { it() } }
 }

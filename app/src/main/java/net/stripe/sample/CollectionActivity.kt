@@ -1,9 +1,9 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import net.kotlin.ex.lib.random
-import net.kotlin.ex.sample.util.debugLog
+import net.stripe.lib.random
+import net.stripe.sample.util.debugLog
 
 /**
  * 数组示例

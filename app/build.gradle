@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion _compileSdkVersion
     defaultConfig {
-        applicationId "net.kotlin.coroutines.sample"
+        applicationId "net.stripe.sample"
         minSdkVersion _minSdkVersion
         targetSdkVersion _targetSdkVersion
         versionCode 1

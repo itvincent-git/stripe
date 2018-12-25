@@ -1,4 +1,4 @@
-package net.kotlin.ex.lib
+package net.stripe.lib
 
 /**
  * 判空用的扩展方法

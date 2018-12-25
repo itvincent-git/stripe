@@ -4,6 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="net.kotlin.ex.sample.coroutines.ChildrenCoroutineActivity">
+    tools:context="net.kotlin.ex.sample.net.stripe.sample.coroutines.ChildrenCoroutineActivity">
 
 </android.support.constraint.ConstraintLayout>

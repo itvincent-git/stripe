@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.kotlin.ex.sample">
+    package="net.stripe.sample">
 
     <application
         android:allowBackup="true"
@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="net.stripe.sample.MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,26 +19,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".CollectionActivity"
+            android:name="net.stripe.sample.CollectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".NPEActivity"
+            android:name="net.stripe.sample.NPEActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RunOnceActivity"
+            android:name="net.stripe.sample.RunOnceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TryTimesActivity"
+            android:name="net.stripe.sample.TryTimesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LifecycleActivity"
+            android:name="net.stripe.sample.LifecycleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".BufferTaskActivity"
+            android:name="net.stripe.sample.BufferTaskActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".coroutines.CoroutineScopeActivity" />
-        <activity android:name=".coroutines.ChildrenCoroutineActivity" />
-        <activity android:name=".coroutines.CoroutineExceptionActivity"></activity>
+        <activity android:name="net.stripe.sample.coroutines.CoroutineScopeActivity" />
+        <activity android:name="net.stripe.sample.coroutines.ChildrenCoroutineActivity" />
+        <activity android:name="net.stripe.sample.coroutines.CoroutineExceptionActivity"></activity>
     </application>
 
 </manifest>

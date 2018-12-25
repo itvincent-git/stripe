@@ -1,9 +1,9 @@
-package net.kotlin.ex.sample
+package net.stripe.sample
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import net.kotlin.coroutines.lib.tryTimes
+import net.stripe.lib.tryRepeat
 import java.lang.RuntimeException
 
 class TryTimesActivity : AppCompatActivity() {
@@ -12,7 +12,7 @@ class TryTimesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_try_times)
 
-        tryTimes(3) {
+        tryRepeat(3) {
             if (it < 2) throw RuntimeException("current times:$it fail")
             Toast.makeText(this, "run $it times ok", Toast.LENGTH_SHORT).show()
         }

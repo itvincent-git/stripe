@@ -1,11 +1,11 @@
-package net.kotlin.ex.sample.coroutines
+package net.stripe.sample.coroutines
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
-import net.kotlin.ex.lib.lifecycleScope
-import net.kotlin.ex.sample.R
-import net.kotlin.ex.sample.util.errorLog
+import net.stripe.lib.lifecycleScope
+import net.stripe.sample.R
+import net.stripe.sample.util.errorLog
 import java.lang.RuntimeException
 
 /**

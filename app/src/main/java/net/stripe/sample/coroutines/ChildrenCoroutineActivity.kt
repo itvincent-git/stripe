@@ -1,11 +1,11 @@
-package net.kotlin.ex.sample.coroutines
+package net.stripe.sample.coroutines
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
-import net.kotlin.ex.lib.lifecycleScope
-import net.kotlin.ex.sample.R
-import net.kotlin.ex.sample.util.debugLog
+import net.stripe.lib.lifecycleScope
+import net.stripe.sample.R
+import net.stripe.sample.util.debugLog
 
 /**
  * 当子协程使用父协程的coroutineScope时，当父协程cancel()时，子协程也会自动取消执行
