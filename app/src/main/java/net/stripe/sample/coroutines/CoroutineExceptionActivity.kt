@@ -3,6 +3,7 @@ package net.stripe.sample.coroutines
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
+import net.stripe.lib.AppScope
 import net.stripe.lib.lifecycleScope
 import net.stripe.sample.R
 import net.stripe.sample.util.errorLog
@@ -18,6 +19,7 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         setContentView(R.layout.activity_coroutine_exception)
         loadData()
         loadDataLifecycle()
+        loadDataInAppScope()
     }
 
     //val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
@@ -45,5 +47,9 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         } catch (e: Exception) {
             errorLog(e)
         }
+    }
+
+    private fun loadDataInAppScope() = AppScope.launch {
+        throw RuntimeException()
     }
 }
