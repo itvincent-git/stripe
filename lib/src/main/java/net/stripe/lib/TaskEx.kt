@@ -70,7 +70,7 @@ val mainHandler : Handler = Handler(Looper.getMainLooper())
 fun runInMainThread(lifecycleOwner: LifecycleOwner? = null,
                     delay: Long = 0L,
                     timeUnit: TimeUnit = TimeUnit.MILLISECONDS,
-                    cancelWhenEvent: Lifecycle.Event? = null,
+                    cancelWhenEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY,
                     block: () -> Unit) {
     CancelableTask(mainHandler).bindWithLifecycle(lifecycleOwner, cancelWhenEvent).apply { this.run(delay, timeUnit, Runnable { block() }) }
 }

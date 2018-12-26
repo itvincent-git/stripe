@@ -14,13 +14,13 @@ import kotlinx.coroutines.Job
 /**
  * 绑定Cancelable
  */
-fun LifecycleOwner.bindCancelable(cancelWhenEvent:Lifecycle.Event? = null, block: () -> Cancelable)
+fun LifecycleOwner.bindCancelable(cancelWhenEvent:Lifecycle.Event = Lifecycle.Event.ON_DESTROY, block: () -> Cancelable)
         = bindCancelableBlockWithLifecycle(this, cancelWhenEvent, block)
 
 /**
  * 绑定到LifecycleOwner
  */
-fun <T : Cancelable> T.bindWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null)
+fun <T : Cancelable> T.bindWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event = Lifecycle.Event.ON_DESTROY)
         = this.apply { bindCancelableBlockWithLifecycle(lifecycleOwner, cancelWhenEvent) { this } }
 
 /**
@@ -52,43 +52,21 @@ interface Cancelable {
  * 可取消的接口使用的生命周期绑定
  */
 class CancelableLifecycle {
-    var mLastEvent: Lifecycle.Event = Lifecycle.Event.ON_ANY
-    var mTargetEvent: Lifecycle.Event = Lifecycle.Event.ON_ANY
 
     fun observe(lifecycleOwner: LifecycleOwner, cancelable: Cancelable) {
-        observe(lifecycleOwner, cancelable, null)
+        observe(lifecycleOwner, cancelable)
     }
 
-    fun observe(lifecycleOwner: LifecycleOwner, cancelable: Cancelable, cancelWhenEvent:Lifecycle.Event?) {
-        if (cancelWhenEvent != null) {
-            mTargetEvent = cancelWhenEvent
-        }
+    fun observe(lifecycleOwner: LifecycleOwner, cancelable: Cancelable, cancelWhenEvent:Lifecycle.Event = Lifecycle.Event.ON_DESTROY) {
         lifecycleOwner.lifecycle.addObserverInMain(object : LifecycleObserver {
 
             @OnLifecycleEvent(Lifecycle.Event.ON_ANY)
             fun onStateChanged(owner: LifecycleOwner, event: Lifecycle.Event) {
-                if (cancelWhenEvent == null && mLastEvent == Lifecycle.Event.ON_ANY) {
-                    mLastEvent = event
-                    //如果没有定义取消事件，则根据当前执行到的开始事件对应的结束来定义
-                    when (mLastEvent) {
-                        Lifecycle.Event.ON_CREATE -> mTargetEvent = Lifecycle.Event.ON_DESTROY
-                        Lifecycle.Event.ON_START -> mTargetEvent = Lifecycle.Event.ON_STOP
-                        Lifecycle.Event.ON_RESUME -> mTargetEvent = Lifecycle.Event.ON_PAUSE
-                    }
-                }
 
-                if (event == mTargetEvent) {
+                if (event == cancelWhenEvent) {
                     //取消任务
                     cancelable.cancel()
-                }
-
-                if (owner.lifecycle.currentState == Lifecycle.Event.ON_DESTROY) {
-                    //destroy时要取消监听
                     owner.lifecycle.removeObserver(this)
-                    if (mTargetEvent == Lifecycle.Event.ON_ANY) {
-                        //如果mTargetEvent还是默认值，代表没有被取消过，此时要最后取消一次
-                        cancelable.cancel()
-                    }
                 }
             }
         })
@@ -103,7 +81,7 @@ class CancelableLifecycle {
  * @param cancelWhenEvent 当此生命周期出现时，才cancel
  * @param block block返回Cancelable用于取消
  */
-fun bindCancelableBlockWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null, block: () -> Cancelable) {
+fun bindCancelableBlockWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event = Lifecycle.Event.ON_DESTROY, block: () -> Cancelable) {
     lifecycleOwner?.let {
         CancelableLifecycle().observe(it, block(), cancelWhenEvent)
     }
@@ -117,7 +95,7 @@ fun bindCancelableBlockWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhen
  * @param cancelWhenEvent 当此生命周期出现时，才cancel
  * @param cancelable Cancelable用于取消
  */
-fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event? = null, cancelable: Cancelable) {
+fun bindCancelableWithLifecycle(lifecycleOwner: LifecycleOwner?, cancelWhenEvent:Lifecycle.Event = Lifecycle.Event.ON_DESTROY, cancelable: Cancelable) {
     lifecycleOwner?.let {
         CancelableLifecycle().observe(it, cancelable, cancelWhenEvent)
     }
@@ -133,7 +111,7 @@ inline val LifecycleOwner.lifecycleScope get() = lifecycle.lifecycleScope
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
  */
 fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
-    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default)
+    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default + LoggingExceptionHandler)
 }
 
 /**
@@ -182,7 +160,7 @@ private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
 val Lifecycle.lifecycleScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Default)
+        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
         if (job.isActive) {
             lifecycleCoroutineScopes[this] = newScope
             job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
