@@ -22,34 +22,43 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         loadDataInAppScope()
     }
 
-    //val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
+//    val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
     val job: Job = SupervisorJob()//子协程的异常或取消，不会影响父协程的运行
     val scope = CoroutineScope(Dispatchers.Default + job)
-    // may throw Exception
-    private fun doWork(): Deferred<Unit> = scope.async { throw RuntimeException(); Unit }   // (1)
 
+    // 自定义的scope用的是SupervisorJob能捕获异常
     private fun loadData() = scope.launch {
         try {
-            doWork().await()                               // (2)
+            scope.async {
+                throw RuntimeException()
+            }.await()
         } catch (e: Exception) {
-            errorLog(e)
+            errorLog("loadData", e)
         }
     }
 
-    //问个题coroutineScope{}做子协程，抛出的异常，父协程也能捕获到
-    private suspend fun doWorkLifecycle(): Deferred<Unit> = coroutineScope {
-        async { throw RuntimeException(); Unit }   // (1)
-    }
-
+    //使用activity生命周期的lifecycleScope
     private fun loadDataLifecycle() = lifecycleScope.launch {
         try {
-            doWorkLifecycle().await()                               // (2)
+            //coroutineScope{}做子协程，抛出的异常，父协程也能捕获到
+            coroutineScope {
+                async {
+                    throw RuntimeException()
+                }
+            }.await()
         } catch (e: Exception) {
-            errorLog(e)
+            errorLog("loadDataLifecycle", e)
         }
     }
 
+    //AppScope的exceptionhandler能捕获到异常
     private fun loadDataInAppScope() = AppScope.launch {
-        throw RuntimeException()
+        try {
+            async {
+                throw RuntimeException()
+            }.await()
+        } catch (e: Exception) {
+            errorLog("loadDataInAppScope", e)
+        }
     }
 }
