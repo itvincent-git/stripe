@@ -39,7 +39,8 @@
         <activity android:name=".coroutines.CoroutineScopeActivity" />
         <activity android:name=".coroutines.ChildrenCoroutineActivity" />
         <activity android:name=".coroutines.CoroutineExceptionActivity" />
-        <activity android:name=".ObserverableViewModelActivity"></activity>
+        <activity android:name=".ObserverableViewModelActivity" />
+        <activity android:name=".coroutines.ViewModelScopeActivity"></activity>
     </application>
 
 </manifest>

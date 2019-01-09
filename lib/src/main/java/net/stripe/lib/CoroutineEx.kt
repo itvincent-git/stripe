@@ -123,23 +123,45 @@ val Lifecycle.lifecycleScope: CoroutineScope
     }
 // ----------- lifecycleScope End--------------
 
-//private val viewModelCoroutineScopes = mutableMapOf<ViewModel, CoroutineScope>()
-//private val viewModelJobs = mutableMapOf<ViewModel, Job>()
-//
-//val ObserverableViewModel.job: Job
-//    get() = viewModelJobs[this] ?: createJob().also {
-//        if (it.isActive) {
-//            viewModelJobs[this] = it
-//            it.invokeOnCompletion { _ -> viewModelJobs -= this }
-//        }
-//    }
-//
-//val ObserverableViewModel.viewModelScope: CoroutineScope
-//    get() = viewModelCoroutineScopes[this] ?: job.let { job ->
-//        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
-//        if (job.isActive) {
-//            viewModelCoroutineScopes[this] = newScope
-//            job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
-//        }
-//        newScope
-//    }
+// ----------- viewModelScope start --------------
+private val viewModelCoroutineScopes = mutableMapOf<ViewModelObserverable, CoroutineScope>()
+private val viewModelJobs = mutableMapOf<ViewModelObserverable, Job>()
+
+/**
+ * create a job is bind to the ViewModelObserver, will cancel when the ViewModel onClear
+ */
+fun ViewModelObserverable.createJob(): Job {
+    return Job().also { job ->
+        addObserver(object : ViewModelObserver {
+            override fun onCleared() {
+                removeObserver(this)
+                job.cancel()
+            }
+        })
+    }
+}
+
+/**
+ * job is bind to the ViewModelObserver, will cancel when the ViewModel onClear
+ */
+val ViewModelObserverable.job: Job
+    get() = viewModelJobs[this] ?: createJob().also {
+        if (it.isActive) {
+            viewModelJobs[this] = it
+            it.invokeOnCompletion { viewModelJobs -= this }
+        }
+    }
+
+/**
+ * scope is bind to the ViewModelObserver, will cancel when the ViewModel onClear
+ */
+val ViewModelObserverable.viewModelScope: CoroutineScope
+    get() = viewModelCoroutineScopes[this] ?: job.let { job ->
+        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
+        if (job.isActive) {
+            viewModelCoroutineScopes[this] = newScope
+            job.invokeOnCompletion { viewModelCoroutineScopes -= this }
+        }
+        newScope
+    }
+// ----------- viewModelScope end --------------
