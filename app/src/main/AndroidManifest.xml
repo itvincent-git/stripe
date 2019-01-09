@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="net.stripe.sample.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,26 +19,27 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="net.stripe.sample.CollectionActivity"
+            android:name=".CollectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="net.stripe.sample.NPEActivity"
+            android:name=".NPEActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="net.stripe.sample.RunOnceActivity"
+            android:name=".RunOnceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="net.stripe.sample.TryTimesActivity"
+            android:name=".TryTimesActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="net.stripe.sample.LifecycleActivity"
+            android:name=".LifecycleActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="net.stripe.sample.BufferTaskActivity"
+            android:name=".BufferTaskActivity"
             android:screenOrientation="portrait" />
-        <activity android:name="net.stripe.sample.coroutines.CoroutineScopeActivity" />
-        <activity android:name="net.stripe.sample.coroutines.ChildrenCoroutineActivity" />
-        <activity android:name="net.stripe.sample.coroutines.CoroutineExceptionActivity"></activity>
+        <activity android:name=".coroutines.CoroutineScopeActivity" />
+        <activity android:name=".coroutines.ChildrenCoroutineActivity" />
+        <activity android:name=".coroutines.CoroutineExceptionActivity" />
+        <activity android:name=".ObserverableViewModelActivity"></activity>
     </application>
 
 </manifest>

@@ -3,7 +3,7 @@ package net.stripe.sample.coroutines
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
-import net.stripe.lib.AppScope
+import net.stripe.lib.appScope
 import net.stripe.lib.lifecycleScope
 import net.stripe.sample.R
 import net.stripe.sample.util.errorLog
@@ -52,7 +52,7 @@ class CoroutineExceptionActivity : AppCompatActivity() {
     }
 
     //AppScope的exceptionhandler能捕获到异常
-    private fun loadDataInAppScope() = AppScope.launch {
+    private fun loadDataInAppScope() = appScope.launch {
         try {
             async {
                 throw RuntimeException()

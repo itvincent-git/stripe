@@ -58,7 +58,7 @@ fun <T, S: CoroutineScope> S.asyncWithLifecycle(lifecycleOwner: LifecycleOwner,
                                                 context: CoroutineContext = EmptyCoroutineContext,
                                                 start: CoroutineStart = CoroutineStart.DEFAULT,
                                                 block: suspend CoroutineScope.() -> T): Deferred<T> {
-    val job = AppScope.async(context = context, start = start, block = block)
+    val job = appScope.async(context = context, start = start, block = block)
     CoroutineLifecycle().observe(lifecycleOwner, job)
     return job
 }
@@ -107,7 +107,7 @@ fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job>
 /**
  * 全局App生命周期的Scope，替代GlobalScope
  */
-val AppScope = GlobalScope + LoggingExceptionHandler
+val appScope = GlobalScope + LoggingExceptionHandler
 
 
 // ----------- lifecycleScope Start --------------
@@ -177,3 +177,24 @@ val Lifecycle.lifecycleScope: CoroutineScope
         newScope
     }
 // ----------- lifecycleScope End--------------
+
+//private val viewModelCoroutineScopes = mutableMapOf<ViewModel, CoroutineScope>()
+//private val viewModelJobs = mutableMapOf<ViewModel, Job>()
+//
+//val ObserverableViewModel.job: Job
+//    get() = viewModelJobs[this] ?: createJob().also {
+//        if (it.isActive) {
+//            viewModelJobs[this] = it
+//            it.invokeOnCompletion { _ -> viewModelJobs -= this }
+//        }
+//    }
+//
+//val ObserverableViewModel.viewModelScope: CoroutineScope
+//    get() = viewModelCoroutineScopes[this] ?: job.let { job ->
+//        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
+//        if (job.isActive) {
+//            viewModelCoroutineScopes[this] = newScope
+//            job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
+//        }
+//        newScope
+//    }
