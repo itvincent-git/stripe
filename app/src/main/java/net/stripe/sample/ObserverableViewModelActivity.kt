@@ -17,12 +17,18 @@ class ObserverableViewModelActivity : AppCompatActivity() {
     }
 }
 
-class MyViewModel(): ObserverableViewModel() {
+class MyViewModel: ObserverableViewModel() {
 
     fun addObserver() {
         addObserver(observer = object: ViewModelObserver {
             override fun onCleared() {
                 debugLog("MyViewModel onCleared")
+            }
+        })
+
+        addObserver(observer = object: ViewModelObserver {
+            override fun onCleared() {
+                debugLog("MyViewModel onCleared2")
             }
         })
     }

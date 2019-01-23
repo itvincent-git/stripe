@@ -1,7 +1,9 @@
 package net.stripe.lib
 
 import android.arch.lifecycle.ViewModel
+import android.os.Handler
 import android.os.Looper
+import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * ObserverableViewModel implement the ViewModelObserverable
@@ -9,7 +11,8 @@ import android.os.Looper
  * Created by zhongyongsheng on 2019/1/9.
  */
 open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
-    val observers = mutableSetOf<ViewModelObserver>()
+    private val observers = CopyOnWriteArraySet<ViewModelObserver>()
+    private val handler = Handler(Looper.getMainLooper())
 
     init {
         onCreating()
@@ -26,7 +29,7 @@ open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
      */
     override fun addObserver(observer: ViewModelObserver) {
         if (Looper.getMainLooper() != Looper.myLooper()) {
-            mainHandler.post { observers.add(observer) }
+            handler.post { observers.add(observer) }
         } else {
             observers.add(observer)
         }
@@ -45,6 +48,7 @@ open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
 
     override fun onCleared() {
         super.onCleared()
+        handler.removeCallbacksAndMessages(null)
         for (i in observers) {
             i.onCleared()
         }
