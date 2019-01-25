@@ -3,11 +3,17 @@ package net.stripe.lib
 import java.util.*
 
 /**
- * 组合，数组等扩展
+ * Collections/arrays extensions
  * Created by zhongyongsheng on 2018/11/21.
  */
 
 /**
- * 从一个List中随机取1个数据
+ * Returns one data at random from a List
  */
-fun <E> List<E>.random(): E? = if (size > 0) get(Random().nextInt(size)) else null
+inline fun <E> List<E>.random(): E? = if (size > 0) get(Random().nextInt(size)) else null
+
+/**
+ * Returns a set containing the results of applying the given [transform] function
+ * to each element in the original collection.
+ */
+inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R) = mapTo(HashSet(), transform)
