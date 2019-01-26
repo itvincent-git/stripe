@@ -14,7 +14,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 /**
  * 协程异常时打印日志
  */
-val LoggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
+var loggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
     Log.e("CoroutineException", "Coroutine exception occurred", throwable)
 }
 
@@ -52,7 +52,7 @@ fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job>
 /**
  * 全局App生命周期的Scope，替代GlobalScope
  */
-val appScope = GlobalScope + LoggingExceptionHandler
+val appScope = GlobalScope + loggingExceptionHandler
 
 
 // ----------- lifecycleScope Start --------------
@@ -65,7 +65,7 @@ inline val LifecycleOwner.lifecycleScope get() = lifecycle.lifecycleScope
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
  */
 fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
-    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default + LoggingExceptionHandler)
+    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default + loggingExceptionHandler)
 }
 
 /**
@@ -114,7 +114,7 @@ private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
 val Lifecycle.lifecycleScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
+        val newScope = CoroutineScope(job + Dispatchers.Default + loggingExceptionHandler)
         if (job.isActive) {
             lifecycleCoroutineScopes[this] = newScope
             job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
@@ -157,7 +157,7 @@ val ViewModelObserverable.job: Job
  */
 val ViewModelObserverable.viewModelScope: CoroutineScope
     get() = viewModelCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Default + LoggingExceptionHandler)
+        val newScope = CoroutineScope(job + Dispatchers.Default + loggingExceptionHandler)
         if (job.isActive) {
             viewModelCoroutineScopes[this] = newScope
             job.invokeOnCompletion { viewModelCoroutineScopes -= this }
