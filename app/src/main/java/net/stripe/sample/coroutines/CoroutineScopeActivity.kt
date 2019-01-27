@@ -3,6 +3,7 @@ package net.stripe.sample.coroutines
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.coroutines.*
+import net.stripe.lib.AppScheduler
 import net.stripe.lib.lifecycleScope
 import net.stripe.sample.R
 import net.stripe.sample.util.debugLog
@@ -26,7 +27,7 @@ class CoroutineScopeActivity : AppCompatActivity() {
         // launch ten coroutines for a demo, each working for a different time
         repeat(10) { i ->
             //this job will cancel when activity onDestory
-            launch(Dispatchers.Default) {
+            launch(AppScheduler.NON_BLOCKING) {
                 delay((i + 1) * 500L) // variable delay 200ms, 400ms, ... etc
                 debugLog("Coroutine $i is done")
             }

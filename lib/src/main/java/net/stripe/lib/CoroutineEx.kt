@@ -1,11 +1,12 @@
 package net.stripe.lib
 
-import android.arch.lifecycle.*
+import android.arch.lifecycle.GenericLifecycleObserver
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleOwner
 import android.util.Log
 import kotlinx.coroutines.*
+import kotlinx.coroutines.scheduling.ExperimentalCoroutineDispatcher
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
 
 /**
  * 协程相关扩展
@@ -15,7 +16,7 @@ import kotlin.coroutines.EmptyCoroutineContext
  * 协程异常时打印日志
  */
 var loggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
-    Log.e("CoroutineException", "Coroutine exception occurred", throwable)
+    Log.e("CoroutineException", "Coroutine exception occurred. $context", throwable)
 }
 
 /**
@@ -65,7 +66,7 @@ inline val LifecycleOwner.lifecycleScope get() = lifecycle.lifecycleScope
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
  */
 fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
-    return CoroutineScope(createJob(cancelEvent) + Dispatchers.Default + loggingExceptionHandler)
+    return CoroutineScope(createJob(cancelEvent) + AppScheduler.NON_BLOCKING + loggingExceptionHandler)
 }
 
 /**
@@ -114,7 +115,7 @@ private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
 val Lifecycle.lifecycleScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Default + loggingExceptionHandler)
+        val newScope = CoroutineScope(job + AppScheduler.NON_BLOCKING + loggingExceptionHandler)
         if (job.isActive) {
             lifecycleCoroutineScopes[this] = newScope
             job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
@@ -157,7 +158,7 @@ val ViewModelObserverable.job: Job
  */
 val ViewModelObserverable.viewModelScope: CoroutineScope
     get() = viewModelCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + Dispatchers.Default + loggingExceptionHandler)
+        val newScope = CoroutineScope(job + AppScheduler.NON_BLOCKING + loggingExceptionHandler)
         if (job.isActive) {
             viewModelCoroutineScopes[this] = newScope
             job.invokeOnCompletion { viewModelCoroutineScopes -= this }
@@ -165,3 +166,24 @@ val ViewModelObserverable.viewModelScope: CoroutineScope
         newScope
     }
 // ----------- viewModelScope end --------------
+
+// number of processors at startup for consistent prop initialization
+internal val AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors()
+internal const val APP_SCHEDULER_NAME = "AppScheduler"
+
+/**
+ * custom defined App Scheduler
+ */
+@UseExperimental(InternalCoroutinesApi::class)
+object AppScheduler : ExperimentalCoroutineDispatcher() {
+    /**
+     * non blocking scheduler and no more than the cpu cores
+     */
+    val NON_BLOCKING = limited(AVAILABLE_PROCESSORS)
+
+    override fun close() {
+        throw UnsupportedOperationException("$APP_SCHEDULER_NAME cannot be closed")
+    }
+
+    override fun toString(): String = APP_SCHEDULER_NAME
+}
