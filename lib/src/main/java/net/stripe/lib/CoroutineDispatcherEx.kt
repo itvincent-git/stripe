@@ -10,6 +10,7 @@ import java.util.concurrent.locks.LockSupport
 import kotlin.coroutines.CoroutineContext
 
 /**
+ * custom defined the ExecutorCoroutineDispatcher extentions
  * Created by zhongyongsheng on 2019/1/28.
  */
 
@@ -179,6 +180,7 @@ object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
         override fun newThread(r: Runnable): Thread {
             return object : Thread(poolName + threadNum.incrementAndGet()) {
                 override fun run() {
+                    android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_BACKGROUND)
                     r.run()
                 }
             }
@@ -190,7 +192,7 @@ object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
         try {
-            Log.d("CoroutineEx", "dispatch $context $block")
+            if (BuildConfig.DEBUG) Log.d("CoroutineEx", "dispatch $context $block")
             executor.execute(block)
         } catch (e: RejectedExecutionException) {
             DefaultExecutor.dispatch(context, block)
