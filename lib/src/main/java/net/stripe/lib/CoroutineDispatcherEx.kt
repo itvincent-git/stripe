@@ -2,6 +2,7 @@ package net.stripe.lib
 
 import android.util.Log
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.newSingleThreadContext
 import java.util.concurrent.*
@@ -173,8 +174,13 @@ internal var timeSource: TimeSource = DefaultTimeSource
  */
 object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
     private val poolName = "ThreadPoolDispatcher"
+    private val TAG = "CoroutineDispatcherEx"
+    private val poolSize = AVAILABLE_PROCESSORS.coerceAtLeast(4)
+    init {
+        if (BuildConfig.DEBUG) Log.d(TAG, "ThreadPoolDispatcher init $poolSize")
+    }
 
-    override val executor: Executor = Executors.newFixedThreadPool(AVAILABLE_PROCESSORS, object : ThreadFactory{
+    override val executor: Executor = Executors.newFixedThreadPool(poolSize, object : ThreadFactory{
         private val threadNum = AtomicInteger(0)
 
         override fun newThread(r: Runnable): Thread {
@@ -192,12 +198,24 @@ object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
 
     override fun dispatch(context: CoroutineContext, block: Runnable) {
         try {
-            if (BuildConfig.DEBUG) Log.d("CoroutineEx", "dispatch $context $block")
-            executor.execute(block)
+            if (BuildConfig.DEBUG) Log.d(TAG, "dispatch $context $block")
+            executor.execute(RunnableWrapper(block))
         } catch (e: RejectedExecutionException) {
             DefaultExecutor.dispatch(context, block)
         }
     }
+
+    class RunnableWrapper(val realRunnable: Runnable) : Runnable {
+        private val number = AtomicInteger(0)
+
+        override fun run() {
+            if (BuildConfig.DEBUG) Log.d(TAG, "RunnbleWrapper run start[$number] $realRunnable")
+            realRunnable.run()
+            if (BuildConfig.DEBUG) Log.d(TAG, "RunnbleWrapper run end[$number] $realRunnable")
+        }
+
+    }
 }
 
+@UseExperimental(ObsoleteCoroutinesApi::class)
 internal val DefaultExecutor = newSingleThreadContext("DefaultExecutor")

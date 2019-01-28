@@ -53,7 +53,7 @@ fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job>
 /**
  * 全局App生命周期的Scope，替代GlobalScope
  */
-val appScope = GlobalScope + loggingExceptionHandler
+val appScope = GlobalScope + AppScheduler.Default + loggingExceptionHandler
 
 
 // ----------- lifecycleScope Start --------------
@@ -66,7 +66,7 @@ inline val LifecycleOwner.lifecycleScope get() = lifecycle.lifecycleScope
  * Lifecycle.createScope，创建cancelEvent发生时，会把关联的任务全部停止
  */
 fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
-    return CoroutineScope(createJob(cancelEvent) + AppScheduler.DEFAULT + loggingExceptionHandler)
+    return CoroutineScope(createJob(cancelEvent) + AppScheduler.Default + loggingExceptionHandler)
 }
 
 /**
@@ -115,7 +115,7 @@ private val lifecycleCoroutineScopes = mutableMapOf<Lifecycle, CoroutineScope>()
 //返回当前Lifecycle绑定的CoroutineScope，使用Main线程，如果已经存在则从缓存获取，否则创建一个
 val Lifecycle.lifecycleScope: CoroutineScope
     get() = lifecycleCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + AppScheduler.DEFAULT + loggingExceptionHandler)
+        val newScope = CoroutineScope(job + AppScheduler.Default + loggingExceptionHandler)
         if (job.isActive) {
             lifecycleCoroutineScopes[this] = newScope
             job.invokeOnCompletion { _ -> lifecycleCoroutineScopes -= this }
@@ -158,7 +158,7 @@ val ViewModelObserverable.job: Job
  */
 val ViewModelObserverable.viewModelScope: CoroutineScope
     get() = viewModelCoroutineScopes[this] ?: job.let { job ->
-        val newScope = CoroutineScope(job + AppScheduler.DEFAULT + loggingExceptionHandler)
+        val newScope = CoroutineScope(job + AppScheduler.Default + loggingExceptionHandler)
         if (job.isActive) {
             viewModelCoroutineScopes[this] = newScope
             job.invokeOnCompletion { viewModelCoroutineScopes -= this }
@@ -179,7 +179,9 @@ object AppScheduler : ExperimentalCoroutineDispatcher() {
     /**
      * non blocking scheduler and no more than the cpu cores
      */
-    val DEFAULT = ThreadPoolDispatcher//CommonPool//limited(AVAILABLE_PROCESSORS)
+    val Default = ThreadPoolDispatcher//CommonPool//limited(AVAILABLE_PROCESSORS)
+    val Main = Dispatchers.Main
+    val IO = Dispatchers.IO
 
     override fun close() {
         throw UnsupportedOperationException("$APP_SCHEDULER_NAME cannot be closed")
