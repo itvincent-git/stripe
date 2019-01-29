@@ -177,10 +177,18 @@ internal const val APP_SCHEDULER_NAME = "AppScheduler"
 @UseExperimental(InternalCoroutinesApi::class)
 object AppScheduler : ExperimentalCoroutineDispatcher() {
     /**
-     * non blocking scheduler and no more than the cpu cores
+     * launch or async used
      */
-    val Default = ThreadPoolDispatcher//CommonPool//limited(AVAILABLE_PROCESSORS)
+    val Default = Dispatchers.Default//CommonPool//limited(AVAILABLE_PROCESSORS)
+
+    /**
+     * launch in UI
+     */
     val Main = Dispatchers.Main
+
+    /**
+     * that is designed for offloading blocking IO tasks to a shared pool of threads.
+     */
     val IO = Dispatchers.IO
 
     override fun close() {

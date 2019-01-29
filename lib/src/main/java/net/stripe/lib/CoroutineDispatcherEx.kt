@@ -209,9 +209,9 @@ object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
         private val number = AtomicInteger(0)
 
         override fun run() {
-            if (BuildConfig.DEBUG) Log.d(TAG, "RunnbleWrapper run start[$number] $realRunnable")
+            if (BuildConfig.DEBUG) Log.d(TAG, "RunnableWrapper run start[$number] $realRunnable")
             realRunnable.run()
-            if (BuildConfig.DEBUG) Log.d(TAG, "RunnbleWrapper run end[$number] $realRunnable")
+            if (BuildConfig.DEBUG) Log.d(TAG, "RunnableWrapper run end[$number] $realRunnable")
         }
 
     }
