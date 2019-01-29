@@ -12,7 +12,7 @@ package net.stripe.lib
  *  "$it is not null"
  * } ({ "is null" })
  */
-fun <T, R> T?.notNullElse(block: (T)-> R): (() -> R) -> R = { if (this == null) it() else block(this) }
+inline fun <T, R> T?.notNullElse(crossinline block: (T)-> R): (() -> R) -> R = { if (this == null) it() else block(this) }
 
 
 /**
@@ -21,7 +21,7 @@ fun <T, R> T?.notNullElse(block: (T)-> R): (() -> R) -> R = { if (this == null) 
  *     printText("$a, $b is all not null")
  * }
  */
-fun <A, B> allNotNull(first: A?, second: B?, block: (A, B) -> Unit) {
+inline fun <A, B> allNotNull(first: A?, second: B?, block: (A, B) -> Unit) {
     if (first != null && second != null) block(first, second)
 }
 
@@ -31,7 +31,7 @@ fun <A, B> allNotNull(first: A?, second: B?, block: (A, B) -> Unit) {
  *     printText("$a, $b is all not null")
  * }
  */
-fun <A, B, C> allNotNull(first: A?, second: B?, third: C?, block: (A, B, C) -> Unit) {
+inline fun <A, B, C> allNotNull(first: A?, second: B?, third: C?, block: (A, B, C) -> Unit) {
     if (first != null && second != null && third != null) block(first, second, third)
 }
 
@@ -41,7 +41,7 @@ fun <A, B, C> allNotNull(first: A?, second: B?, third: C?, block: (A, B, C) -> U
  *     "$a, $b, $c is all not null"
  *  } ({ "one of them is null"})
  */
-fun <A, B, R> allNotNullElse(first: A?, second: B?, block: (A, B) -> R) : (() -> R) -> R {
+inline fun <A, B, R> allNotNullElse(first: A?, second: B?, crossinline block: (A, B) -> R) : (() -> R) -> R {
     return {
         if (first != null && second != null) {
             block(first, second)
@@ -58,7 +58,7 @@ fun <A, B, R> allNotNullElse(first: A?, second: B?, block: (A, B) -> R) : (() ->
  *     "$a, $b, $c is all not null"
  *  } ({ "one of them is null"})
  */
-fun <A, B, C, R> allNotNullElse(first: A?, second: B?, third: C?, block: (A, B, C) -> R) : (() -> R) -> R {
+inline fun <A, B, C, R> allNotNullElse(first: A?, second: B?, third: C?, crossinline block: (A, B, C) -> R) : (() -> R) -> R {
     return {
         if (first != null && second != null && third != null) {
             block(first, second, third)
