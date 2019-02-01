@@ -13,6 +13,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
     private val observers = CopyOnWriteArraySet<ViewModelObserver>()
     private val handler = Handler(Looper.getMainLooper())
+    private var currentState = ViewModelState.NotCleared
 
     init {
         onCreating()
@@ -46,7 +47,10 @@ open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
         }
     }
 
+    override fun currentState() = currentState
+
     override fun onCleared() {
+        currentState = ViewModelState.Cleared
         super.onCleared()
         handler.removeCallbacksAndMessages(null)
         for (i in observers) {
@@ -62,6 +66,7 @@ open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
 interface ViewModelObserverable {
     fun addObserver(observer: ViewModelObserver)
     fun removeObserver(observer: ViewModelObserver)
+    fun currentState(): ViewModelState
 }
 
 /**
@@ -70,3 +75,8 @@ interface ViewModelObserverable {
 interface ViewModelObserver {
     fun onCleared()
 }
+
+/**
+ * ViewModelState
+ */
+enum class ViewModelState {NotCleared, Cleared}

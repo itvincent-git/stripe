@@ -133,7 +133,8 @@ private val viewModelJobs = mutableMapOf<ViewModelObserverable, Job>()
  */
 fun ViewModelObserverable.createJob(): Job {
     return Job().also { job ->
-        addObserver(object : ViewModelObserver {
+        if (currentState() == ViewModelState.Cleared) job.cancel()
+        else addObserver(object : ViewModelObserver {
             override fun onCleared() {
                 removeObserver(this)
                 job.cancel()
