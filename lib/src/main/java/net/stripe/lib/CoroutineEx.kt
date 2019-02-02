@@ -180,7 +180,7 @@ object AppScheduler : ExperimentalCoroutineDispatcher() {
     /**
      * launch or async used
      */
-    val Default = Dispatchers.Default//CommonPool//limited(AVAILABLE_PROCESSORS)
+    val Default = Dispatchers.Default
 
     /**
      * launch in UI
