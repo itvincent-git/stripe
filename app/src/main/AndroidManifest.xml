@@ -41,7 +41,8 @@
         <activity android:name=".coroutines.CoroutineExceptionActivity" />
         <activity android:name=".ObserverableViewModelActivity" />
         <activity android:name=".coroutines.ViewModelScopeActivity" />
-        <activity android:name=".SystemActivity"></activity>
+        <activity android:name=".SystemActivity" />
+        <activity android:name=".coroutines.ProduceActivity"></activity>
     </application>
 
 </manifest>
