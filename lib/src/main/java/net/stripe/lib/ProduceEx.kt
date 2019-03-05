@@ -17,7 +17,7 @@ import kotlin.coroutines.EmptyCoroutineContext
 fun CoroutineScope.produceInterval(context: CoroutineContext = EmptyCoroutineContext,
                                    capacity: Int = 0,
                                    initialDelay: Long = 0L,
-                                   period: Long) = produce {
+                                   period: Long) = produce(context, capacity) {
     delay(initialDelay)
     while (true) {
         send(System.currentTimeMillis())
@@ -29,8 +29,7 @@ fun CoroutineScope.produceInterval(context: CoroutineContext = EmptyCoroutineCon
  * Send data after delay, and return ReceiveChannel
  */
 fun CoroutineScope.produceDelay(context: CoroutineContext = EmptyCoroutineContext,
-                                   capacity: Int = 0,
-                                   delay: Long) = produce {
+                                   delay: Long) = produce(context) {
     delay(delay)
     send(System.currentTimeMillis())
 }
