@@ -1,10 +1,7 @@
 package net.stripe.lib
 
 import android.util.Log
-import kotlinx.coroutines.ExecutorCoroutineDispatcher
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.Runnable
-import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.*
 import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.LockSupport
@@ -219,3 +216,10 @@ object ThreadPoolDispatcher: ExecutorCoroutineDispatcher() {
 
 @UseExperimental(ObsoleteCoroutinesApi::class)
 internal val DefaultExecutor = newSingleThreadContext("DefaultExecutor")
+
+/**
+ * create dispatcher that only 1 core thread and 1 max thread
+ */
+fun createSingleThreadContext(name: String) = Executors.newSingleThreadExecutor {
+    Thread(it, name).apply { this.isDaemon = true }
+}.asCoroutineDispatcher()
