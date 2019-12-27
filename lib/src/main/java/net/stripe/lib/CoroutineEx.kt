@@ -1,12 +1,22 @@
 package net.stripe.lib
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.GenericLifecycleObserver
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleOwner
 import android.util.Log
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import kotlinx.coroutines.scheduling.ExperimentalCoroutineDispatcher
-import java.util.concurrent.*
+import kotlinx.coroutines.withTimeout
+import java.util.concurrent.TimeUnit
 
 /**
  * 协程相关扩展
@@ -25,9 +35,11 @@ var loggingExceptionHandler = CoroutineExceptionHandler { context, throwable ->
  * @param unit 时长单位
  * @param finalBlock 无论正常还是异常都会执行的finally块
  */
-suspend fun <T> Deferred<T>.awaitOrNull(timeout: Long = 0L,
-                                        unit: TimeUnit = TimeUnit.MILLISECONDS,
-                                        finalBlock: () -> Unit): T? {
+suspend fun <T> Deferred<T>.awaitOrNull(
+    timeout: Long = 0L,
+    unit: TimeUnit = TimeUnit.MILLISECONDS,
+    finalBlock: () -> Unit
+): T? {
     return try {
         if (timeout > 0) {
             withTimeout(unit.toMillis(timeout)) {
@@ -74,12 +86,12 @@ fun Lifecycle.createScope(cancelEvent: Lifecycle.Event): CoroutineScope {
  * @param cancelEvent 当收到该生命周期时取消Job，默认ON_DESTROY；forbiddenCancelEvents是不支持的类型
  */
 fun Lifecycle.createJob(cancelEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTROY): Job {
-    if(cancelEvent in forbiddenCancelEvents) {
+    if (cancelEvent in forbiddenCancelEvents) {
         throw UnsupportedOperationException("$cancelEvent is forbidden for createJob(…).")
     }
     return Job().also { job ->
         if (currentState == Lifecycle.State.DESTROYED) job.cancel()
-        else addObserver(object : GenericLifecycleObserver {
+        else addObserver(@SuppressLint("RestrictedApi") object : GenericLifecycleObserver {
             override fun onStateChanged(source: LifecycleOwner?, event: Lifecycle.Event) {
                 if (event == cancelEvent) {
                     removeObserver(this)
@@ -89,12 +101,13 @@ fun Lifecycle.createJob(cancelEvent: Lifecycle.Event = Lifecycle.Event.ON_DESTRO
         })
     }
 }
+
 //不支持取消的类型
 private val forbiddenCancelEvents = arrayOf(
-        Lifecycle.Event.ON_ANY,
-        Lifecycle.Event.ON_CREATE,
-        Lifecycle.Event.ON_START,
-        Lifecycle.Event.ON_RESUME
+    Lifecycle.Event.ON_ANY,
+    Lifecycle.Event.ON_CREATE,
+    Lifecycle.Event.ON_START,
+    Lifecycle.Event.ON_RESUME
 )
 
 //全局保存绑定了生命周期的jobs
