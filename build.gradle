@@ -6,10 +6,10 @@ buildscript {
         _targetSdkVersion = 27
         _buildToolsVersion = '27.0.2'
         _minSdkVersion = 21
-        kotlin_version = '1.3.41'
-        kotlin_coroutines_version = '1.3.0-RC'
+        kotlin_version = '1.3.50'
+        kotlin_coroutines_version = '1.3.2'
         support_version = '27.1.1'
-        coroutines_android_version = '1.3.0-RC'
+        coroutines_android_version = '1.3.2'
 
         // === release ==
         release_version = '0.0.1'
