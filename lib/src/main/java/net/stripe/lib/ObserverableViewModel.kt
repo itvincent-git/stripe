@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArraySet
  *
  * Created by zhongyongsheng on 2019/1/9.
  */
-open class ObserverableViewModel(): ViewModel(), ViewModelObserverable {
+open class ObserverableViewModel() : ViewModel(), ViewModelObserverable {
     private val observers = CopyOnWriteArraySet<ViewModelObserver>()
     private val handler = Handler(Looper.getMainLooper())
     private var currentState = ViewModelState.NotCleared
@@ -79,4 +79,4 @@ interface ViewModelObserver {
 /**
  * ViewModelState
  */
-enum class ViewModelState {NotCleared, Cleared}
+enum class ViewModelState { NotCleared, Cleared }
