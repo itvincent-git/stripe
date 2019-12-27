@@ -9,11 +9,9 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import kotlinx.coroutines.scheduling.ExperimentalCoroutineDispatcher
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
@@ -65,8 +63,7 @@ fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job>
 /**
  * 全局App生命周期的Scope，替代GlobalScope
  */
-val appScope = GlobalScope + AppScheduler.Default + loggingExceptionHandler
-
+val appScope = CoroutineScope(Job() + AppScheduler.Default + loggingExceptionHandler)
 
 // ----------- lifecycleScope Start --------------
 /**
