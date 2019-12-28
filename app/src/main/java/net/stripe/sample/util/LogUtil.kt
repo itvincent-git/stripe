@@ -6,6 +6,7 @@ import android.widget.Toast
 
 /**
  * 测试日志
+ *
  * Created by zhongyongsheng on 2018/9/13.
  */
 const val TAG = "LogUtil"
