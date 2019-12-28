@@ -7,6 +7,7 @@ import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
 import net.stripe.lib.appScope
 import net.stripe.lib.lifecycleScope
+import net.stripe.lib.safeOffer
 import net.stripe.sample.R
 import net.stripe.sample.util.debugLog
 import net.stripe.sample.util.errorLog
@@ -35,11 +36,8 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         }*/
 
         //
-        try {
-            actor.offer(System.currentTimeMillis())
-        } catch (e: Exception) {
-            errorLog("catch error", e)
-        }
+        val ret = actor.safeOffer(System.currentTimeMillis())
+        debugLog("ret: $ret")
         //在destory时调用lifecycleScope并不会崩溃，代码也并不会执行
         lifecycleScope.launch {
             debugLog("test onDestroy")
