@@ -30,17 +30,23 @@ class CoroutineExceptionActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         //不加这判断就会崩溃
-        if (!actor.isClosedForSend) {
+        /*if (!actor.isClosedForSend) {
             actor.offer(System.currentTimeMillis())
-        }
+        }*/
 
+        //
+        try {
+            actor.offer(System.currentTimeMillis())
+        } catch (e: Exception) {
+            errorLog("catch error", e)
+        }
         //在destory时调用lifecycleScope并不会崩溃，代码也并不会执行
         lifecycleScope.launch {
             debugLog("test onDestroy")
         }
     }
 
-//    val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
+    //val job: Job = Job()//子协程的异常或取消，会停止父协程的运行，直接抛出子协程的异常，导致崩溃
     val job: Job = SupervisorJob()//子协程的异常或取消，不会影响父协程的运行
     val scope = CoroutineScope(Dispatchers.Default + job)
 
