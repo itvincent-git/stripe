@@ -20,6 +20,7 @@ android {
     }
     packagingOptions {
         pickFirst 'META-INF/proguard/coroutines.pro'
+        pickFirst 'META-INF/services/kotlinx.coroutines.CoroutineExceptionHandler'
     }
 }
 
