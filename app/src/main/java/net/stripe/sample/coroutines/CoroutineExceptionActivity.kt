@@ -1,17 +1,23 @@
 package net.stripe.sample.coroutines
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.coroutines.*
+import android.support.v7.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.actor
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import net.stripe.lib.appScope
 import net.stripe.lib.lifecycleScope
-import net.stripe.lib.safeOffer
+import net.stripe.lib.toSafeSendChannel
 import net.stripe.sample.R
 import net.stripe.sample.util.debugLog
 import net.stripe.sample.util.errorLog
-import java.lang.RuntimeException
 
 /**
  * 父子协程处理异常
@@ -36,7 +42,7 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         }*/
 
         //
-        val ret = actor.safeOffer(System.currentTimeMillis())
+        val ret = actor.offer(System.currentTimeMillis())
         debugLog("ret: $ret")
         //在destory时调用lifecycleScope并不会崩溃，代码也并不会执行
         lifecycleScope.launch {
@@ -101,5 +107,5 @@ class CoroutineExceptionActivity : AppCompatActivity() {
             //异常会被lifecycleScope中定义的ExceptionHandler处理
             throw ConcurrentModificationException()
         }
-    }
+    }.toSafeSendChannel()
 }

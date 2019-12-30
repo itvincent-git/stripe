@@ -5,7 +5,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.SendChannel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.concurrent.TimeUnit
@@ -53,15 +52,4 @@ suspend fun <T> Deferred<T>.awaitOrNull(
  */
 fun <T : CoroutineScope> T.launchAll(vararg args: suspend () -> Unit): List<Job> {
     return args.map { launch { it() } }
-}
-
-/**
- * 发送[SendChannel.offer]。判断actor是否已经关闭，并且捕获异常
- */
-fun <E> SendChannel<E>.safeOffer(element: E): Boolean {
-    return try {
-        if (!isClosedForSend) offer(element) else false
-    } catch (e: Exception) {
-        false
-    }
 }
