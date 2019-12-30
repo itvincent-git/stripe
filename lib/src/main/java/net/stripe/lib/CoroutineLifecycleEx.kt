@@ -14,7 +14,7 @@ import kotlinx.coroutines.Job
  */
 
 /**
- * 全局App生命周期的Scope，替代GlobalScope
+ * 全局App生命周期的Scope，替代GlobalScope。这个Scope是有Job的。
  */
 val appScope: CoroutineScope
     get() = CoroutineScope(Job() + Dispatchers.Default + loggingExceptionHandler)
