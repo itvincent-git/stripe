@@ -16,7 +16,8 @@ import kotlinx.coroutines.Job
 /**
  * 全局App生命周期的Scope，替代GlobalScope
  */
-val appScope = CoroutineScope(Job() + Dispatchers.Default + loggingExceptionHandler)
+val appScope: CoroutineScope
+    get() = CoroutineScope(Job() + Dispatchers.Default + loggingExceptionHandler)
 
 // ----------- lifecycleScope Start --------------
 /**

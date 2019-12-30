@@ -30,8 +30,10 @@ class CoroutineExceptionActivity : AppCompatActivity() {
 //        loadData()
 //        loadDataLifecycle()
 //        loadDataInAppScope()
+        loadDataInAppScopeThrowException()
+        appScopeActor.offer(System.currentTimeMillis())
 //        loadDataInGlobal()
-        actor.offer(System.currentTimeMillis())
+//        actor.offer(System.currentTimeMillis())
     }
 
     override fun onDestroy() {
@@ -46,7 +48,8 @@ class CoroutineExceptionActivity : AppCompatActivity() {
         debugLog("ret: $ret")
         //在destory时调用lifecycleScope并不会崩溃，代码也并不会执行
         lifecycleScope.launch {
-            debugLog("test onDestroy")
+            debugLog("The code doesn't execute")
+            throw RuntimeException()
         }
     }
 
@@ -108,4 +111,22 @@ class CoroutineExceptionActivity : AppCompatActivity() {
             throw ConcurrentModificationException()
         }
     }.toSafeSendChannel()
+
+    /**
+     * 验证appScope如果出错后，后续再打开[CoroutineExceptionActivity]使用appScope也不应该崩溃
+     */
+    private fun loadDataInAppScopeThrowException() {
+        debugLog("loadDataInAppScopeThrowException $appScope")
+        appScope.launch {
+            throw RuntimeException("loadDataInAppScopeThrowException")
+        }
+    }
+
+    //同上
+    private val appScopeActor = appScope.actor<Long> {
+        debugLog("appScopeActor $appScope")
+        consumeEach {
+            throw ConcurrentModificationException()
+        }
+    }
 }
