@@ -3,10 +3,10 @@ package net.stripe.sample.coroutines
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import kotlinx.android.synthetic.main.activity_view_model_scope.*
+import kotlinx.android.synthetic.main.activity_view_model_scope.button
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
-import net.stripe.lib.ObserverableViewModel
+import net.stripe.lib.ObservableViewModel
 import net.stripe.lib.viewModelScope
 import net.stripe.sample.R
 import net.stripe.sample.util.debugLog
@@ -21,7 +21,7 @@ class ViewModelScopeActivity : AppCompatActivity() {
     }
 }
 
-class MyViewModel: ObserverableViewModel() {
+class MyViewModel : ObservableViewModel() {
 
     fun call() {
         viewModelScope.async {

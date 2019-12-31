@@ -3,7 +3,7 @@ package net.stripe.sample
 import android.arch.lifecycle.ViewModelProviders
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import net.stripe.lib.ObserverableViewModel
+import net.stripe.lib.ObservableViewModel
 import net.stripe.lib.ViewModelObserver
 import net.stripe.sample.util.debugLog
 
@@ -17,16 +17,16 @@ class ObserverableViewModelActivity : AppCompatActivity() {
     }
 }
 
-class MyViewModel: ObserverableViewModel() {
+class MyViewModel : ObservableViewModel() {
 
     fun addObserver() {
-        addObserver(observer = object: ViewModelObserver {
+        addObserver(observer = object : ViewModelObserver {
             override fun onCleared() {
                 debugLog("MyViewModel onCleared")
             }
         })
 
-        addObserver(observer = object: ViewModelObserver {
+        addObserver(observer = object : ViewModelObserver {
             override fun onCleared() {
                 debugLog("MyViewModel onCleared2")
             }
