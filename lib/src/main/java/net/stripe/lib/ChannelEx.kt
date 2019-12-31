@@ -4,7 +4,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.SendChannel
 
 /**
- * kotlin coroutine extension
+ * coroutine Channel extension
  * @author zhongyongsheng
  */
 
