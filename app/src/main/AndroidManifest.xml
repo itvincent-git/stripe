@@ -42,7 +42,8 @@
         <activity android:name=".ObserverableViewModelActivity" />
         <activity android:name=".coroutines.ViewModelScopeActivity" />
         <activity android:name=".SystemActivity" />
-        <activity android:name=".coroutines.ProduceActivity"></activity>
+        <activity android:name=".coroutines.ProduceActivity" />
+        <activity android:name=".coroutines.ActorActivity"></activity>
     </application>
 
 </manifest>
